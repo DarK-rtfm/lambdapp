@@ -114,22 +114,18 @@ inline const lambda Lt = combinator::C * Gt;
  * fac_h = λself. λn. Is0 n 1 (Mul n (self (Pred n)))
  * fac =Y (λsn. Is0 n 1 (Mul n (s (Pred n))))
  */
-inline const lambda fac = combinator::Y([](lambda s) {
-  return
-      [s](lambda n) { return Is0 * n * Succ(Zero) * (Mul * n * s(Pred * n)); };
-});
+inline const lambda fac =
+    combinator::Y * λ(s, n, Is0 * n * Succ(Zero) * (Mul * n * s(Pred * n)));
 
 /**
- fib_h = λs. λn. Is0 n 0 (Add (s (Pred n)) (s (Pred (Pred n))))
+ fib_h = λs. λn. Is0 (Pred n) 1 (Add (s (Pred n)) (s (Pred (Pred n))))
 
  fib = Y fib_h
  */
-inline const lambda fib = combinator::Y([](lambda s) {
-  return lambda{[s](lambda n) {
-    return Is0 * Pred(n) * Succ(Zero) *
-           (Add * s(Pred * n) * (s * Pred(Pred * n)));
-  }};
-});
+inline const lambda fib =
+    combinator::Y *
+    λ(s, n,
+      Is0 *Pred(n) * Succ(Zero) * (Add * s(Pred * n) * s(Pred * (Pred * n))));
 // ---^^^--- abstractions implementated.
 
 // ---vvv--- C++ <-> Church conversions

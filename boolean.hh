@@ -14,7 +14,7 @@ inline const auto False = lambda::boolean(false, combinator::KI);
 
 // force to bool in case b doesnt originate from a lambda::boolean
 inline lambda coherseBool(const lambda &b) {
-  const auto result = b(True)(False);
+  const auto result = b * True * False;
   return result;
 }
 

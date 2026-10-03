@@ -53,23 +53,30 @@ inline const auto Reverse = Fold * (combinator::C * combinator::V) * Nil;
  * Take = Y$ (λself. λn. λlist. Or (Is0 n) (Null list) (Nil) (Hd list %= self
  * (Pred n) (Tl list)))
  */
-inline const auto Take = combinator::Y([](lambda self) {
-  return [self](lambda n) {
-    return [self, n](lambda list) {
-      return boolean::Or * number::Is0(n) * Null(list) * Nil *
-             (Hd(list) %= self * number::Pred(n) * Tl(list));
-    };
-  };
-});
+inline const auto Take =
+    combinator::Y * λ(self, n, list,
+                      boolean::Or *number::Is0(n) * Null(list) * Nil *
+                          (Hd(list) %= self(number::Pred * n)(Tl(list))));
 
 /**
- * Inflist = λn. n %= (s (Succ n))
+ * Drop = Y$ (λself. λn. λlist. Or (Is0 n) (Null list) (list) (self (Pred n) (Tl
+ * list)))
+ */
+inline const auto Drop =
+    combinator::Y * λ(self, n, list,
+                      boolean::Or *number::Is0(n) * Null(list) * list *
+                          self(number::Pred * n)(Tl(list)));
+
+/**
+ * Inflist = (λsn. n %= (s (Succ n))) 0
  */
 inline const auto Inflist =
-    combinator::Y([](lambda f) {
-      return [f](lambda n) { return n %= f * number::Succ(n); };
-    }) *
-    number::Zero;
+    combinator::Y * λ(s, n, n %= (s(number::Succ * n))) * number::Zero;
+
+/**
+ * Range m n= (Drop m |= Take n ) Inflist
+ */
+inline const auto Range = λ(m, n, (Drop(m) |= Take(n)) * Inflist);
 
 /*
 Iota = λn. Take n Inflist = λn. C Take Inflist n = C Take Inflist

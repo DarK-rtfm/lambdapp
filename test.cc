@@ -322,51 +322,51 @@ void testListRangeAndIota() {
           print_list(list::Iota(number::fromInt(count))), expected);
   }
 
-  // struct RangeCase {
-  //   const char *name;
-  //   int start;
-  //   int end;
-  //   const char *expected;
-  // };
-  // const std::array<RangeCase, 4> range_cases{{
-  //     {"from-zero", 0, 4, "(0) %= (1) %= (2) %= (3) %= Nil"},
-  //     {"middle", 2, 5, "(2) %= (3) %= (4) %= Nil"},
-  //     {"equal-bounds", 3, 3, "Nil"},
-  //     {"past-end", 5, 3, "Nil"},
-  // }};
+  struct RangeCase {
+    const char *name;
+    int start;
+    int end;
+    const char *expected;
+  };
+  const std::array<RangeCase, 4> range_cases{{
+      {"from-zero", 0, 4, "(0) %= (1) %= (2) %= (3) %= Nil"},
+      {"middle", 2, 5, "(2) %= (3) %= (4) %= Nil"},
+      {"equal-bounds", 3, 3, "Nil"},
+      {"past-end", 5, 3, "Nil"},
+  }};
 
-  // for (const auto &[name, start, end, expected] : range_cases) {
-  //   std::cout << "  Range(" << name << ")\n";
-  //   check(std::string("Range(") + name + ")",
-  //         print_list(list::Range(number::fromInt(start))(number::fromInt(end))),
-  //         expected);
-  // }
+  for (const auto &[name, start, end, expected] : range_cases) {
+    std::cout << "  Range(" << name << ")\n";
+    check(std::string("Range(") + name + ")",
+          print_list(list::Range(number::fromInt(start))(number::fromInt(end))),
+          expected);
+  }
 }
 
-// void testListDrop() {
-//   std::cout << "Running list Drop tests...\n";
-//   auto booleans = boolean::True %= boolean::False %= list::Nil;
-//   auto numbers = 1 %= 2 %= 3 %= 4 %= list::Nil;
-//   auto mixed = boolean::True %= 7 %= boolean::False %= list::Nil;
-//
-//   const std::array<
-//       std::pair<const char *, std::tuple<int, lambda, const char *>>, 6>
-//       cases{{
-//           {"zero", {0, numbers, "(1) %= (2) %= (3) %= (4) %= Nil"}},
-//           {"empty", {3, list::Nil, "Nil"}},
-//           {"prefix", {2, numbers, "(3) %= (4) %= Nil"}},
-//           {"exact", {4, numbers, "Nil"}},
-//           {"longer", {6, numbers, "Nil"}},
-//           {"mixed", {1, mixed, "(7) %= (False) %= Nil"}},
-//       }};
-//
-//   for (const auto &[name, test_case] : cases) {
-//     std::cout << "  Drop(" << name << ")\n";
-//     const auto &[count, input, expected] = test_case;
-//     check(std::string("Drop(") + name + ")",
-//           print_list(list::Drop(number::fromInt(count))(input)), expected);
-//   }
-// }
+void testListDrop() {
+  std::cout << "Running list Drop tests...\n";
+  auto booleans = boolean::True %= boolean::False %= list::Nil;
+  auto numbers = 1 %= 2 %= 3 %= 4 %= list::Nil;
+  auto mixed = boolean::True %= 7 %= boolean::False %= list::Nil;
+
+  const std::array<
+      std::pair<const char *, std::tuple<int, lambda, const char *>>, 6>
+      cases{{
+          {"zero", {0, numbers, "(1) %= (2) %= (3) %= (4) %= Nil"}},
+          {"empty", {3, list::Nil, "Nil"}},
+          {"prefix", {2, numbers, "(3) %= (4) %= Nil"}},
+          {"exact", {4, numbers, "Nil"}},
+          {"longer", {6, numbers, "Nil"}},
+          {"mixed", {1, mixed, "(7) %= (False) %= Nil"}},
+      }};
+
+  for (const auto &[name, test_case] : cases) {
+    std::cout << "  Drop(" << name << ")\n";
+    const auto &[count, input, expected] = test_case;
+    check(std::string("Drop(") + name + ")",
+          print_list(list::Drop(number::fromInt(count))(input)), expected);
+  }
+}
 
 void testListTake() {
   std::cout << "Running list Take tests...\n";
@@ -402,7 +402,7 @@ int main() {
   testFormatting();
   testListLengths();
   testListReverse();
-  // testListDrop();
+  testListDrop();
   testListTake();
   testListRangeAndIota();
 
