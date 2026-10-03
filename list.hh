@@ -10,7 +10,7 @@ inline const auto Nil = lambda::list(combinator::K * boolean::True);
 inline const auto Null =
     combinator::Th(combinator::K(combinator::K(boolean::False)));
 
-inline const auto Cons = pair::Pair;
+inline const auto Cons = lambda::list |= pair::Pair;
 
 inline const auto Hd = pair::Fst;
 
@@ -84,8 +84,34 @@ Iota = λn. Take n Inflist = λn. C Take Inflist n = C Take Inflist
 inline const auto Iota = combinator::C * list::Take * list::Inflist;
 
 /**
- * Map = λs. λfl. Null l Nil (f (Head l) %= (s f (Tail l)))
+ * Zipwith = \self f l1 l2 = Or (Null l1) (Null l2) Nil (f (Hd l1) (Hd l2) %=
+ * self f (Tl l1) (Tl l2))
  */
+inline const auto Zipwith =
+    combinator::Y * λ(self, f, l1, l2,
+                      boolean::Or *Null(l1) * Null(l2) * Nil *
+                          (f * Hd(l1) * Hd(l2) %= self(f)(Tl(l1))(Tl(l2))));
+
+/**
+ * Zip = Zipwith V
+ * (implemented as Zipwith (λab. a ^ b)) so it gets marked as a pair.
+ */
+inline const auto Zip = Zipwith * (λ(a, b, (a, b)));
+
+/**
+ * Repeat = Y$ λsx. x %= (s x)
+ */
+inline const auto Repeat = combinator::Y * λ(s, x, x %= (s * x));
+
+/**
+ * Withindex = C Zip InfList
+ */
+inline const auto Withindex = λ(l, Zip(l)(Inflist));
+
+/**
+ * Map = ZipWith I |= Repeat
+ */
+inline const auto Map = Zipwith *combinator::I |= Repeat;
 } // namespace list
 
 inline std::string print_list(const lambda &lst) {

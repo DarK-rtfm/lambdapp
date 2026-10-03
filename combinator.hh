@@ -74,7 +74,13 @@ inline lambda operator^=(const lambda &f, const lambda &g) {
   return combinator::BBB * f * g;
 }
 
-// inline virio / pair / list constructor (V) — right associative
+// inline list constructor (V) — right associative
 inline const auto operator%=(lambda hd, lambda tl) {
   return lambda::list(combinator::V * hd * tl);
+}
+
+// Pair constructor, kept distinct from the list constructor cuz marking, left
+// associative.
+inline const auto operator,(lambda first, lambda second) {
+  return lambda::pair(combinator::V * first * second);
 }

@@ -13,11 +13,12 @@ class lambda {
     std::optional<int> int_value;
     std::optional<bool> bool_value;
     bool isList = false;
+    bool isPair = false;
 
     state(std::function<lambda(lambda)> f, std::optional<int> int_value,
-          std::optional<bool> bool_value, bool isList)
+          std::optional<bool> bool_value, bool isList, bool isPair)
         : f(std::move(f)), int_value(int_value), bool_value(bool_value),
-          isList(isList) {}
+          isList(isList), isPair(isPair) {}
 
     explicit state(std::function<lambda()> thunk) : thunk(std::move(thunk)) {}
   };
@@ -25,9 +26,9 @@ class lambda {
   std::shared_ptr<state> state_;
 
   lambda(std::function<lambda(lambda)> f, std::optional<int> int_value,
-         std::optional<bool> bool_value, bool isList)
+         std::optional<bool> bool_value, bool isList, bool isPair)
       : state_(std::make_shared<state>(std::move(f), int_value, bool_value,
-                                       isList)) {}
+                                       isList, isPair)) {}
 
   explicit lambda(std::function<lambda()> thunk)
       : state_(std::make_shared<state>(std::move(thunk))) {}
@@ -61,17 +62,20 @@ public:
   lambda(F &&f)
       : state_(std::make_shared<state>(
             std::function<lambda(lambda)>(std::forward<F>(f)), std::nullopt,
-            std::nullopt, false)) {}
+            std::nullopt, false, false)) {}
 
   static lambda integer(int value, lambda f) {
-    return lambda{f, value, std::nullopt, false};
+    return lambda{f, value, std::nullopt, false, false};
   }
 
   static lambda boolean(bool value, lambda f) {
-    return lambda{f, std::nullopt, value, false};
+    return lambda{f, std::nullopt, value, false, false};
   }
   static lambda list(lambda f) {
-    return lambda{f, std::nullopt, std::nullopt, true};
+    return lambda{f, std::nullopt, std::nullopt, true, false};
+  }
+  static lambda pair(lambda f) {
+    return lambda{f, std::nullopt, std::nullopt, false, true};
   }
 
   const std::optional<int> &intValue() const {
@@ -82,6 +86,7 @@ public:
     return resolve().state_->bool_value;
   }
   const bool isList() const { return resolve().state_->isList; }
+  const bool isPair() const { return resolve().state_->isPair; }
 
   lambda operator()(lambda x) const {
     const lambda function = *this;
@@ -93,6 +98,7 @@ public:
   lambda(int x);
   lambda(bool x);
   std::string print_list(const lambda &list) const;
+  std::string print_pair(const lambda &pair) const;
 };
 
 inline std::string toString(const lambda &l) {
@@ -100,6 +106,8 @@ inline std::string toString(const lambda &l) {
     return std::to_string(l.intValue().value());
   } else if (l.boolValue()) {
     return l.boolValue().value() ? "True" : "False";
+  } else if (l.isPair()) {
+    return l.print_pair(l);
   } else if (l.isList()) {
     return l.print_list(l);
   } else {

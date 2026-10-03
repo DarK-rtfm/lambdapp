@@ -368,6 +368,45 @@ void testListDrop() {
   }
 }
 
+void checkPairList(const std::string &label, lambda result,
+                   const std::array<std::pair<int, int>, 3> &expected,
+                   int expected_size) {
+  for (int index = 0; index < expected_size; ++index) {
+    const auto pair = list::Hd(result);
+    checkIntegerResult(label + "[" + std::to_string(index) + "].first",
+                       pair::Fst(pair), expected[index].first);
+    checkIntegerResult(label + "[" + std::to_string(index) + "].second",
+                       pair::Snd(pair), expected[index].second);
+    result = list::Tl(result);
+  }
+  checkBooleanResult(label + " terminator", list::Null(result), true);
+}
+
+void testListZip() {
+  std::cout << "Running list Zip and ZipWith tests...\n";
+  auto empty = list::Nil;
+  auto left = 1 %= 2 %= 3 %= list::Nil;
+  auto right = 10 %= 20 %= 30 %= list::Nil;
+  auto short_right = 10 %= 20 %= list::Nil;
+
+  checkPairList("Zip(empty)", list::Zip(empty)(empty), {}, 0);
+  checkPairList("Zip(equal)", list::Zip(left)(right),
+                {{{1, 10}, {2, 20}, {3, 30}}}, 3);
+  checkPairList("Zip(short)", list::Zip(left)(short_right),
+                {{{1, 10}, {2, 20}, {0, 0}}}, 2);
+
+  auto sums = list::Zipwith(number::Add)(left)(right);
+  checkBooleanResult("ZipWith(empty)",
+                     list::Null(list::Zipwith(number::Add)(empty)(empty)),
+                     true);
+  checkIntegerResult("ZipWith(equal)[0]", list::Hd(sums), 11);
+  checkIntegerResult("ZipWith(equal)[1]", list::Hd(list::Tl(sums)), 22);
+  checkIntegerResult("ZipWith(equal)[2]", list::Hd(list::Tl(list::Tl(sums))),
+                     33);
+  checkBooleanResult("ZipWith(equal) terminator",
+                     list::Null(list::Tl(list::Tl(list::Tl(sums)))), true);
+}
+
 void testListTake() {
   std::cout << "Running list Take tests...\n";
   auto booleans = boolean::True %= boolean::False %= list::Nil;
@@ -403,6 +442,7 @@ int main() {
   testListLengths();
   testListReverse();
   testListDrop();
+  testListZip();
   testListTake();
   testListRangeAndIota();
 
