@@ -105,7 +105,7 @@ inline std::string toString(const lambda &l) {
   if (l.intValue()) {
     return std::to_string(l.intValue().value());
   } else if (l.boolValue()) {
-    return l.boolValue().value() ? "True" : "False";
+    return l.boolValue().value() ? "True " : "False";
   } else if (l.isPair()) {
     return l.print_pair(l);
   } else if (l.isList()) {
