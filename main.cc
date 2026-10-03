@@ -3,8 +3,8 @@
 #include <iostream>
 
 int main() {
-  std::cout << list::Withindex(1 %= list::Nil) << std::endl;
-  std::cout << list::Sum(list::Iota * 10) << std::endl;
-  std::cout << list::Len(list::Iota * 10) << std::endl;
+  auto const l = list::Take(10) *= list::Withindex *= list::Repeat *=
+      boolean::False;
+  std::cout << l << std::endl;
   return 0;
 }

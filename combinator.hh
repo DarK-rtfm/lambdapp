@@ -4,6 +4,8 @@
 #include "lambda_macros.hpp"
 // inline application — left associative
 inline lambda operator*(const lambda &f, const lambda &x) { return f(x); }
+// inline application -- right associative
+inline lambda operator*=(const lambda &f, const lambda &x) { return f(x); }
 
 namespace combinator {
 /**
@@ -64,7 +66,7 @@ inline const lambda Y = λ(f, (λλ(x, f *(x *x))) * (λλ(x, f *(x *x))));
 
 } // namespace combinator
 
-// inline composition (B) — lower precedence than application
+// inline composition (B) -- right associative
 inline lambda operator|=(const lambda &f, const lambda &g) {
   return combinator::B * f * g;
 }
