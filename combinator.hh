@@ -9,15 +9,38 @@ inline lambda operator*=(const lambda &f, const lambda &x) { return f(x); }
 
 namespace combinator {
 /**
- * I = λx.x
+ * S = λuvw.u w (v w)
  */
-inline const lambda I = λ(x, x);
+inline const lambda S = λ(u, v, w, u *w *= v * w);
 
 /**
  * K = λab.a
  */
 inline const lambda K = λ(a, b, a);
 
+/**
+ * I = λx.x
+ *
+ * S K K = λa. K a (K a) = λa. a = I
+ */
+inline const lambda I = S * K * K;
+
+/**
+ * B = λfgx.f (g x)
+ *
+ * S(KS)K = λa. K S a (K a) = λa. S (K a)
+ * = λabc. S (k a) b c = λabc. (K a) c (b c) = λabc. a (b c) = B
+ */
+inline const lambda B = S * (K * S) * K;
+
+/**
+ * B2 = B B
+ */
+inline const lambda B2 = B * B;
+/**
+ * B3 = B B B
+ */
+inline const lambda B3 = B * B * B;
 /**
  * KI = K I = λab.b
  */
@@ -29,24 +52,9 @@ inline const lambda KI = K * I;
 inline const lambda C = λ(f, a, b, f * b * a);
 
 /**
- * B = λfgx.f (g x)
- */
-inline const lambda B = λ(f, g, x, f *(g *x));
-
-/**
- * BBB = B B B
- */
-inline const lambda BBB = B * B * B;
-
-/**
  * V = λabf.f a b
  */
 inline const lambda V = λ(a, b, f, f * a * b);
-
-/**
- * S = λuvw.u w (v w)
- */
-inline const lambda S = λ(u, v, w, u * w * (v * w));
 
 /**
  * Th = λaf.f a
@@ -71,9 +79,9 @@ inline lambda operator|=(const lambda &f, const lambda &g) {
   return combinator::B * f * g;
 }
 
-// inline BBB
+// inline B3
 inline lambda operator^=(const lambda &f, const lambda &g) {
-  return combinator::BBB * f * g;
+  return combinator::B3 * f * g;
 }
 
 // inline list constructor (V) — right associative
