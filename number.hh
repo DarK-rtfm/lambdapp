@@ -38,13 +38,12 @@ inline const auto Succ = coherseInt |= combinator::S * combinator::B;
  * Pred = λn. Fst (n Phi (Pair 0 0)) = λn . Fst (V Phi (Pair 0 0) n) = λn. B Fst
  * (V Phi (Pair 0 0)) n = B Fst (V Phi (Pair 0 0)) = B (Th K) (V Phi (V (KI)
  * (KI))) = ... phi behelyettesitve inline
+ * ... = Th K |= V (S V Succ |= Th KI) (0,0)
  */
-inline const auto Pred = combinator::B(combinator::Th(combinator::K))(
-    combinator::V(combinator::B(combinator::S(combinator::V)(Succ))(
-        combinator::Th(combinator::KI)))(combinator::V(Zero)(Zero)));
-// inline const auto Pred = combinator::Th * combinator::K |=
-//     (combinator::S *combinator::V *Succ |= combinator::Th * combinator::KI)
-//     %= Zero %= Zero;
+inline const auto Pred = combinator::Th *combinator::K |=
+    combinator::V *
+    (combinator::S *combinator::V *Succ |= combinator::Th * combinator::KI) *
+    (Zero, Zero);
 
 /**
  * Add = λmnf.(n Succ m) f = λmn. n Succ m = C (λnm. n Succ m) = C (λn. n Succ)
