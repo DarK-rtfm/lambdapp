@@ -111,6 +111,15 @@ inline const lambda Gt = boolean::Not ^= Leq;
 inline const lambda Lt = combinator::C * Gt;
 
 /**
+ * Mod = \self m n = Leq m n m (self (Sub m n) n)
+ */
+inline const lambda Mod =
+    combinator::Y * λ(self, m, n, Leq * m * n * m * (self * (Sub * m * n) * n));
+
+inline const lambda Odd = boolean::Not |= Is0 |= (combinator::C * Mod * 2);
+
+inline const lambda Even = boolean::Not |= Odd;
+/**
  * fac_h = λself. λn. Is0 n 1 (Mul n (self (Pred n)))
  * fac =Y (λsn. Is0 n 1 (Mul n (s (Pred n))))
  */

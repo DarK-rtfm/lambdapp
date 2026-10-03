@@ -3,8 +3,9 @@
 #include <iostream>
 
 int main() {
-  auto const l = list::Take(10) *= list::Withindex *= list::Repeat *=
-      boolean::False;
+  auto const l = list::Iota(10);
+  std::cout << list::Map * number::Even * l << std::endl;
+  std::cout << list::Map * number::Odd * l << std::endl;
   std::cout << l << std::endl;
   return 0;
 }
